@@ -1,6 +1,16 @@
 <resources>
     <string name="app_name">Tugas Akhir Dheni Wibawanto</string>
     <string name="placeholder_search">Cari</string>
-    <string name="kuliner">Culinary</string>
+    <string name="kuliner">Mie Ayam</string>
     <string name="kumpulankuliner">Art Culinary</string>
+    <string name="bakso">Bakso</string>
+    <string name="salad">Salad</string>
+    <string name="soto">Soto</string>
+    <string name="lalapan">Lalapan\n</string>
+    <string name="lumpia">Lumpia</string>
+    <string name="batagor">Batagor</string>
+    <string name="Eaters">Eaters</string>
+    <string name="Makanan_Favorit">Makanan Favorit</string>
+    <string name="bottom_navigation_home">Home</string>
+    <string name="bottom_navigation_profile">Profil</string>
 </resources>
