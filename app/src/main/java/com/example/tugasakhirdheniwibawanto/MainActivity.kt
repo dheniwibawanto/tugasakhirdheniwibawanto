@@ -1,6 +1,7 @@
 package com.example.tugasakhirdheniwibawanto
 
 import android.os.Bundle
+import android.content.res.Configuration
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -27,10 +28,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.tugasakhirdheniwibawanto.ui.theme.TugasAkhirDheniWibawantoTheme
 
 class MainActivity : ComponentActivity() {
@@ -38,16 +41,43 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            TugasAkhirDheniWibawantoTheme {
-                Navigation()
+            TugasAkhirDheniWibawantoTheme  {
+                val navController = rememberNavController()
+                Scaffold(
+                    bottomBar = {
+                        BottomNavigationBar(navController = navController)
+                    }
+                ) { paddingValues ->
+                    Box(modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)) {
+                        Navigation(navController = navController)
+                    }
+                }
             }
         }
     }
 }
 
-// ====================================
-// 🍽️ DESKRIPSI MAKANAN (Tulis Di Sini)
-// ====================================
+@Composable
+fun BottomNavigationBar(navController: NavController) {
+    NavigationBar {
+        NavigationBarItem(
+            icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
+            label = { Text("Home") },
+            selected = navController.currentDestination?.route == "homescreen",
+            onClick = { navController.navigate("homescreen") }
+        )
+        NavigationBarItem(
+            icon = { Icon(Icons.Default.AccountCircle, contentDescription = "Profile") },
+            label = { Text("Profile") },
+            selected = navController.currentDestination?.route == "profilescreen",
+            onClick = { navController.navigate("profilescreen") }
+        )
+    }
+}
+
+
 private val foodDescriptions = mapOf(
     "Bakso" to "Bakso kenyal berkuah gurih, cocok dinikmati saat cuaca dingin.",
     "Salad" to "Perpaduan sayur segar, warna-warni, kaya vitamin dan rasa.",
@@ -72,7 +102,7 @@ fun SearchBar(modifier: Modifier = Modifier) {
             focusedContainerColor = MaterialTheme.colorScheme.surface
         ),
         placeholder = {
-            Text(stringResource(R.string.placeholder_search))
+            Text("Cari makanan favorit...")
         },
         modifier = modifier.fillMaxWidth().heightIn(min = 56.dp)
     )
@@ -205,70 +235,82 @@ fun HomeSection(
 }
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier, navController: NavController) {
-    Column(modifier.verticalScroll(rememberScrollState())) {
-        Spacer(Modifier.height(16.dp))
-        SearchBar(Modifier.padding(horizontal = 16.dp))
-        HomeSection(title = R.string.kumpulankuliner, content = {
-            AlignYourBodyRow(navController = navController)
-        })
-        HomeSection(title = R.string.Makanan_Favorit, content = {
-            FavoriteCollectionsGrid(navController = navController)
-        })
-        Spacer(Modifier.height(16.dp))
-    }
-}
-
-@Composable
-fun BottomNavigation(navController: NavController) {
-    NavigationBar(containerColor = MaterialTheme.colorScheme.surfaceVariant) {
-        NavigationBarItem(
-            icon = { Icon(Icons.Default.Home, contentDescription = null) },
-            label = { Text(stringResource(R.string.bottom_navigation_home)) },
-            selected = true,
-            onClick = { navController.navigate("homescreen") }
-        )
-        NavigationBarItem(
-            icon = { Icon(Icons.Default.AccountCircle, contentDescription = null) },
-            label = { Text(stringResource(R.string.bottom_navigation_profile)) },
-            selected = false,
-            onClick = { navController.navigate("profilescreen") }
-        )
-    }
-}
-
-@Composable
 fun FoodDetailScreen(foodName: String, @DrawableRes imageRes: Int, navController: NavController) {
-    Scaffold(bottomBar = { BottomNavigation(navController) }) { padding ->
+    val description = foodDescriptions[foodName] ?: "Deskripsi belum tersedia."
+
+    Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
-                .padding(padding)
-                .fillMaxSize()
-                .padding(16.dp),
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp)
+                .align(Alignment.TopCenter),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "Detail Makanan", style = MaterialTheme.typography.headlineSmall)
+            Text("Detail Makanan", style = MaterialTheme.typography.headlineSmall)
             Spacer(modifier = Modifier.height(16.dp))
             Image(
                 painter = painterResource(id = imageRes),
-                contentDescription = null,
+                contentDescription = foodName,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .height(200.dp)
                     .fillMaxWidth()
+                    .heightIn(min = 180.dp, max = 220.dp)
                     .clip(MaterialTheme.shapes.medium)
             )
             Spacer(modifier = Modifier.height(16.dp))
-            Text(text = "Nama: $foodName", style = MaterialTheme.typography.titleLarge)
+            Text("Nama: $foodName", style = MaterialTheme.typography.titleLarge)
             Spacer(modifier = Modifier.height(8.dp))
-
-            val description = foodDescriptions[foodName] ?: "Deskripsi belum tersedia."
-            Text(text = description)
-
+            Text(description)
             Spacer(modifier = Modifier.height(24.dp))
-            Button(onClick = { navController.navigate("homescreen") }) {
-                Text("Go to Home Screen")
+            Button(onClick = { navController.popBackStack() }) {
+                Text("Go To Home Screen")
             }
+        }
+    }
+}
+
+
+@Composable
+fun HomeScreen(modifier: Modifier = Modifier, navController: NavController) {
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+
+    if (isLandscape) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+                    .verticalScroll(rememberScrollState())
+            ) {
+                SearchBar(Modifier.padding(bottom = 16.dp))
+                HomeSection(title = R.string.kumpulankuliner) {
+                    AlignYourBodyRow(navController = navController)
+                }
+                HomeSection(title = R.string.Makanan_Favorit) {
+                    FavoriteCollectionsGrid(navController = navController)
+                }
+            }
+        }
+    } else {
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+        ) {
+            SearchBar(Modifier.padding(bottom = 16.dp))
+            HomeSection(title = R.string.kumpulankuliner) {
+                AlignYourBodyRow(navController = navController)
+            }
+            HomeSection(title = R.string.Makanan_Favorit) {
+                FavoriteCollectionsGrid(navController = navController)
+            }
+            Spacer(Modifier.height(16.dp))
         }
     }
 }

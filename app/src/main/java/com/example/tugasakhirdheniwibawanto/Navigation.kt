@@ -1,18 +1,14 @@
 package com.example.tugasakhirdheniwibawanto
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun Navigation() {
-    val navController = rememberNavController()
-
-    NavHost(
-        navController = navController,
-        startDestination = "homescreen"
-    ) {
+fun Navigation(navController: NavHostController) {
+    NavHost(navController = navController, startDestination = "homescreen") {
         composable("homescreen") {
             HomeScreen(navController = navController)
         }
