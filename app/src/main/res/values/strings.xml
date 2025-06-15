@@ -6,11 +6,12 @@
     <string name="bakso">Bakso</string>
     <string name="salad">Salad</string>
     <string name="soto">Soto</string>
-    <string name="lalapan">Lalapan\n</string>
+    <string name="lalapan">Lalapan</string>
     <string name="lumpia">Lumpia</string>
     <string name="batagor">Batagor</string>
     <string name="Eaters">Eaters</string>
     <string name="Makanan_Favorit">Makanan Favorit</string>
     <string name="bottom_navigation_home">Home</string>
     <string name="bottom_navigation_profile">Profil</string>
+    <string name="profile">Dheni Wibawanto</string>
 </resources>
