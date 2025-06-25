@@ -251,10 +251,11 @@ fun FoodDetailScreen(foodName: String, @DrawableRes imageRes: Int, navController
             Image(
                 painter = painterResource(id = imageRes),
                 contentDescription = foodName,
-                contentScale = ContentScale.Crop,
+                contentScale = ContentScale.Fit,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = 180.dp, max = 220.dp)
+                    //.fillMaxWidth()
+                    .width(200.dp)
+                    .height(200.dp)
                     .clip(MaterialTheme.shapes.medium)
             )
             Spacer(modifier = Modifier.height(16.dp))
